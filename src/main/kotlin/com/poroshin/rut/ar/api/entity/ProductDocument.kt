@@ -29,6 +29,8 @@ data class ArMetadata(
     val version: Int?,
     val arType: ArType,
     val placement: ArPlacement,
+    val arResourceUrlAndroid: String? = null,
+    val arResourceUrlIos: String? = null,
     val width: Float,
     val height: Float,
     val depth: Float? = null,

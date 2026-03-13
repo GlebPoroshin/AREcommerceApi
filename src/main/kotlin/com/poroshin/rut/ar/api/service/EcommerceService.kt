@@ -95,7 +95,7 @@ class EcommerceService(
                 version = it.version,
                 arType = it.arType,
                 placement = it.placement,
-                arRecourceUrl = resolveArResourceUrl(osType),
+                arRecourceUrl = resolveArResourceUrl(osType, it.arResourceUrlAndroid, it.arResourceUrlIos),
                 width = it.width,
                 height = it.height,
                 depth = it.depth,
@@ -127,8 +127,8 @@ class EcommerceService(
     }
 
     private fun buildFallbackProductPageInfo(sku: Long, osType: OsType): ProductPageInfo {
-        val imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg"
-        val arUrl = resolveArResourceUrl(osType)
+        val imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…582/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg"
+        val arUrl = resolveArResourceUrl(osType, null, null)
 
         return ProductPageInfo(
             sku = sku,
@@ -158,10 +158,16 @@ class EcommerceService(
         )
     }
 
-    private fun resolveArResourceUrl(osType: OsType): String {
+    private fun resolveArResourceUrl(
+        osType: OsType,
+        androidUrlFromDb: String?,
+        iosUrlFromDb: String?,
+    ): String {
         return when (osType) {
-            OsType.ANDROID -> "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.glb"
-            OsType.IOS -> "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.usdz"
+            OsType.ANDROID -> androidUrlFromDb
+                ?: "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.glb"
+            OsType.IOS -> iosUrlFromDb
+                ?: "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.usdz"
         }
     }
 

@@ -14,14 +14,12 @@ class DataInitializer {
 
     @Bean
     fun seedProducts(productRepository: ProductRepository): CommandLineRunner = CommandLineRunner {
-        if (productRepository.count() > 0) {
-            return@CommandLineRunner
-        }
-
         val commonArMetadata = ArMetadata(
             version = 1002,
             arType = ArType.OBJECT,
             placement = ArPlacement.ANY_HORIZONTAL,
+            arResourceUrlAndroid = "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.glb",
+            arResourceUrlIos = "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.usdz",
             width = 950f,
             height = 1000f,
             depth = 950f,
@@ -33,12 +31,12 @@ class DataInitializer {
                 name = "Диван Skandi",
                 description = "Мягкий велюр, дубовые ножки",
                 price = "18 000",
-                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg",
+                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…582/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg",
                 oldPrice = "24 990",
                 discount = 28,
                 rate = 4.6,
                 images = listOf(
-                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg",
+                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…582/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg",
                     "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_02.jpg",
                 ),
                 rating = 4.6,
@@ -71,12 +69,12 @@ class DataInitializer {
                 name = "Стол Eames",
                 description = "Стекло, бук, стиль mid-century",
                 price = "22 990",
-                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/aoz4PQriekCcblHRW7hgKg/92106858_01.jpg",
+                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…401/lmcode/aoz4PQriekCcblHRW7hgKg/92106858_01.jpg",
                 oldPrice = "26 990",
                 discount = 15,
                 rate = 4.8,
                 images = listOf(
-                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/aoz4PQriekCcblHRW7hgKg/92106858_01.jpg",
+                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…401/lmcode/aoz4PQriekCcblHRW7hgKg/92106858_01.jpg",
                 ),
                 rating = 4.8,
                 characteristics = mapOf(
@@ -92,10 +90,10 @@ class DataInitializer {
                 name = "Тумба Nova",
                 description = "Компактное хранение",
                 price = "7 990",
-                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/0xsaFgwZ0U6BXLKbAk16uA/90782652_01.jpg",
+                imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…753/lmcode/0xsaFgwZ0U6BXLKbAk16uA/90782652_01.jpg",
                 rate = 4.0,
                 images = listOf(
-                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0/lmcode/0xsaFgwZ0U6BXLKbAk16uA/90782652_01.jpg",
+                    "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…753/lmcode/0xsaFgwZ0U6BXLKbAk16uA/90782652_01.jpg",
                 ),
                 rating = 4.0,
                 stock = 15,
@@ -121,6 +119,22 @@ class DataInitializer {
             ),
         )
 
-        productRepository.saveAll(products)
+        val existingProducts = productRepository.findAll()
+        val existingBySku = existingProducts.associateBy { it.sku }
+        val targetSkus = products.map { it.sku }.toSet()
+
+        val synchronizedProducts = products.map { product ->
+            val existingId = existingBySku[product.sku]?.id
+            if (existingId != null) product.copy(id = existingId) else product
+        }
+
+        productRepository.saveAll(synchronizedProducts)
+
+        val staleIds = existingProducts
+            .filter { it.sku !in targetSkus }
+            .mapNotNull { it.id }
+        if (staleIds.isNotEmpty()) {
+            productRepository.deleteAllById(staleIds)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.poroshin.rut.ar.api.service
 
+import com.poroshin.rut.ar.api.config.YandexS3Properties
 import com.poroshin.rut.ar.api.dto.BasketItemDto
 import com.poroshin.rut.ar.api.dto.BasketRequest
 import com.poroshin.rut.ar.api.dto.BasketResponse
@@ -24,6 +25,7 @@ class EcommerceService(
     private val productRepository: ProductRepository,
     private val basketRepository: BasketRepository,
     private val userRepository: UserRepository,
+    private val yandexS3Properties: YandexS3Properties,
 ) {
 
     fun createUserId(): String {
@@ -95,7 +97,7 @@ class EcommerceService(
                 version = it.version,
                 arType = it.arType,
                 placement = it.placement,
-                arRecourceUrl = resolveArResourceUrl(osType, it.arResourceUrlAndroid, it.arResourceUrlIos),
+                arRecourceUrl = resolveArResourceUrl(osType, it.arResourceUrlAndroid, it.arResourceUrlIos, sku),
                 width = it.width,
                 height = it.height,
                 depth = it.depth,
@@ -127,8 +129,8 @@ class EcommerceService(
     }
 
     private fun buildFallbackProductPageInfo(sku: Long, osType: OsType): ProductPageInfo {
-        val imageUrl = "https://cdn.lemanapro.ru/lmru/image/upload/dpr_2.0…582/lmcode/kGthtXjO_EiIT47Y7XJboQ/92389573_01.jpg"
-        val arUrl = resolveArResourceUrl(osType, null, null)
+        val imageUrl = buildImageUrl(sku)
+        val arUrl = resolveArResourceUrl(osType, null, null, sku)
 
         return ProductPageInfo(
             sku = sku,
@@ -162,18 +164,30 @@ class EcommerceService(
         osType: OsType,
         androidUrlFromDb: String?,
         iosUrlFromDb: String?,
+        sku: Long,
     ): String {
         return when (osType) {
-            OsType.ANDROID -> androidUrlFromDb
-                ?: "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.glb"
-            OsType.IOS -> iosUrlFromDb
-                ?: "https://storage.yandexcloud.net/ar-app/models/AR-Code-1683007596576.usdz"
+            OsType.ANDROID -> androidUrlFromDb ?: buildArModelUrl(sku, AR_EXT_ANDROID)
+            OsType.IOS -> iosUrlFromDb ?: buildArModelUrl(sku, AR_EXT_IOS)
         }
+    }
+
+    private fun buildImageUrl(sku: Long): String {
+        return "${yandexS3Properties.endpoint}/${yandexS3Properties.buckets.images}/$sku.png"
+    }
+
+    private fun buildArModelUrl(sku: Long, extension: String): String {
+        return "${yandexS3Properties.endpoint}/${yandexS3Properties.buckets.models}/$sku.$extension"
     }
 
     private fun ensureUserExists(userId: String) {
         if (userRepository.findByUserId(userId) == null) {
             userRepository.save(UserDocument(userId = userId))
         }
+    }
+
+    private companion object {
+        const val AR_EXT_ANDROID = "glb"
+        const val AR_EXT_IOS = "usdz"
     }
 }

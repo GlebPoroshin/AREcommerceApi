@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="92" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#172033">p95 latency по эндпоинтам</text>
+<text x="92" y="64" font-family="Arial, sans-serif" font-size="14" fill="#526070">Основной load-test: ramping 0 → 100 VUs, полный покупательский сценарий</text>
+<line x1="92" y1="454.0" x2="882" y2="454.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="80" y="458.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">0 ms</text>
+<line x1="92" y1="361.5" x2="882" y2="361.5" stroke="#e6eaf0" stroke-width="1"/>
+<text x="80" y="365.5" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">5 ms</text>
+<line x1="92" y1="269.0" x2="882" y2="269.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="80" y="273.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">10 ms</text>
+<line x1="92" y1="176.5" x2="882" y2="176.5" stroke="#e6eaf0" stroke-width="1"/>
+<text x="80" y="180.5" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">15 ms</text>
+<line x1="92" y1="84.0" x2="882" y2="84.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="80" y="88.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">20 ms</text>
+<rect x="92.0" y="311.4" width="140.4" height="142.6" rx="3" fill="#3b73d9"/>
+<text x="162.2" y="301.4" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">7.7 ms</text>
+<text x="162.2" y="502" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">createUserId</text>
+<rect x="254.4" y="355.0" width="140.4" height="99.0" rx="3" fill="#2f9e8f"/>
+<text x="324.6" y="345.0" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">5.4 ms</text>
+<text x="324.6" y="502" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">GET /plp</text>
+<rect x="416.8" y="329.5" width="140.4" height="124.5" rx="3" fill="#7b61d1"/>
+<text x="487.0" y="319.5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">6.7 ms</text>
+<text x="487.0" y="502" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">GET /pdp</text>
+<rect x="579.2" y="229.6" width="140.4" height="224.4" rx="3" fill="#d97706"/>
+<text x="649.4" y="219.6" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">12.1 ms</text>
+<text x="649.4" y="502" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">POST /basket</text>
+<rect x="741.6" y="269.2" width="140.4" height="184.8" rx="3" fill="#64748b"/>
+<text x="811.8" y="259.2" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">10.0 ms</text>
+<text x="811.8" y="502" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">GET /basket</text>
+<line x1="92" y1="454" x2="882" y2="454" stroke="#9aa6b2" stroke-width="1.2"/>
+<line x1="92" y1="84" x2="92" y2="454" stroke="#9aa6b2" stroke-width="1.2"/>
+<text x="487.0" y="540" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#526070">Эндпоинты основного load-test</text>
+<text x="22" y="269.0" transform="rotate(-90 22 269.0)" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#526070">p95, мс</text>
+</svg>

@@ -1,0 +1,55 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: smoke-test.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * default: 1 iterations shared among 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+
+  █ THRESHOLDS 
+
+    http_req_failed
+    ✓ 'rate==0' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 6       40.424184/s
+    checks_succeeded...: 100.00% 6 out of 6
+    checks_failed......: 0.00%   0 out of 6
+
+    ✓ createUserId 200
+    ✓ createUserId UUID
+    ✓ plp 200
+    ✓ pdp 200
+    ✓ basket add 200
+    ✓ basket get 200
+
+    HTTP
+    http_req_duration..............: avg=28.59ms  min=5.44ms   med=27.3ms   max=68.59ms  p(90)=55.55ms  p(95)=62.07ms 
+      { expected_response:true }...: avg=28.59ms  min=5.44ms   med=27.3ms   max=68.59ms  p(90)=55.55ms  p(95)=62.07ms 
+    http_req_failed................: 0.00%  0 out of 5
+    http_reqs......................: 5      33.68682/s
+
+    EXECUTION
+    iteration_duration.............: avg=148.32ms min=148.32ms med=148.32ms max=148.32ms p(90)=148.32ms p(95)=148.32ms
+    iterations.....................: 1      6.737364/s
+
+    NETWORK
+    data_received..................: 6.3 kB 43 kB/s
+    data_sent......................: 740 B  5.0 kB/s
+
+
+
+
+running (00m00.1s), 0/1 VUs, 1 complete and 0 interrupted iterations
+default ✓ [ 100% ] 1 VUs  00m00.1s/10m0s  1/1 shared iters

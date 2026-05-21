@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="86" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#172033">Зависимость p95 latency от нагрузки</text>
+<text x="86" y="64" font-family="Arial, sans-serif" font-size="14" fill="#526070">Capacity-прогон: последовательные уровни 100, 200, 300, 400 и 600 VUs</text>
+<line x1="86" y1="482.0" x2="878" y2="482.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="74" y="486.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">0 ms</text>
+<line x1="86" y1="382.5" x2="878" y2="382.5" stroke="#e6eaf0" stroke-width="1"/>
+<text x="74" y="386.5" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">375 ms</text>
+<line x1="86" y1="283.0" x2="878" y2="283.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="74" y="287.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">750 ms</text>
+<line x1="86" y1="183.5" x2="878" y2="183.5" stroke="#e6eaf0" stroke-width="1"/>
+<text x="74" y="187.5" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">1.12 s</text>
+<line x1="86" y1="84.0" x2="878" y2="84.0" stroke="#e6eaf0" stroke-width="1"/>
+<text x="74" y="88.0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#526070">1.50 s</text>
+<line x1="86.0" y1="84" x2="86.0" y2="482" stroke="#f0f3f7" stroke-width="1"/>
+<text x="86.0" y="526" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">100</text>
+<line x1="244.4" y1="84" x2="244.4" y2="482" stroke="#f0f3f7" stroke-width="1"/>
+<text x="244.4" y="526" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">200</text>
+<line x1="402.8" y1="84" x2="402.8" y2="482" stroke="#f0f3f7" stroke-width="1"/>
+<text x="402.8" y="526" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">300</text>
+<line x1="561.2" y1="84" x2="561.2" y2="482" stroke="#f0f3f7" stroke-width="1"/>
+<text x="561.2" y="526" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">400</text>
+<line x1="878.0" y1="84" x2="878.0" y2="482" stroke="#f0f3f7" stroke-width="1"/>
+<text x="878.0" y="526" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#526070">600</text>
+<line x1="86" y1="482" x2="878" y2="482" stroke="#9aa6b2" stroke-width="1.2"/>
+<line x1="86" y1="84" x2="86" y2="482" stroke="#9aa6b2" stroke-width="1.2"/>
+<line x1="86" y1="349.3" x2="878" y2="349.3" stroke="#d94841" stroke-width="1.6" stroke-dasharray="7 6"/>
+<text x="878" y="341.3" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#b72f2a">SLO 500 ms</text>
+<polyline points="86.0,459.3 244.4,397.0 402.8,332.6 561.2,283.6 878.0,195.9" fill="none" stroke="#2266cc" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="86.0" cy="459.3" r="5.5" fill="#2266cc" stroke="#ffffff" stroke-width="2"/>
+<text x="86.0" y="447.3" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">86 ms</text>
+<circle cx="244.4" cy="397.0" r="5.5" fill="#2266cc" stroke="#ffffff" stroke-width="2"/>
+<text x="244.4" y="385.0" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">321 ms</text>
+<circle cx="402.8" cy="332.6" r="5.5" fill="#2266cc" stroke="#ffffff" stroke-width="2"/>
+<text x="402.8" y="320.6" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">563 ms</text>
+<circle cx="561.2" cy="283.6" r="5.5" fill="#2266cc" stroke="#ffffff" stroke-width="2"/>
+<text x="561.2" y="271.6" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">748 ms</text>
+<circle cx="878.0" cy="195.9" r="5.5" fill="#2266cc" stroke="#ffffff" stroke-width="2"/>
+<text x="878.0" y="183.9" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#172033">1.08 s</text>
+<text x="482.0" y="550" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#526070">Количество виртуальных пользователей, VUs</text>
+<text x="22" y="283.0" transform="rotate(-90 22 283.0)" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#526070">p95 времени ответа</text>
+</svg>

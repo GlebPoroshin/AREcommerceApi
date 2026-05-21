@@ -27,6 +27,11 @@ class AdminUploadService(
             "Content type '$contentType' does not match format $format; expected '$expectedContentType'"
         }
 
+        when (format) {
+            ModelFormat.GLB -> FileSignatureValidator.validateGlb(bytes)
+            ModelFormat.USDZ -> Unit
+        }
+
         val product = productRepository.findBySku(sku)
             ?: throw IllegalArgumentException("Product with sku $sku not found")
 
@@ -56,10 +61,13 @@ class AdminUploadService(
         val normalizedContentType = when (contentType.lowercase()) {
             "image/png" -> "image/png"
             "image/jpeg", "image/jpg" -> "image/jpeg"
+            "image/webp" -> "image/webp"
             else -> throw IllegalArgumentException(
-                "Unsupported image content type: $contentType; allowed: image/png, image/jpeg, image/jpg",
+                "Unsupported image content type: $contentType; allowed: image/png, image/jpeg, image/webp",
             )
         }
+
+        validateImageSignature(normalizedContentType, bytes)
 
         val product = productRepository.findBySku(sku)
             ?: throw IllegalArgumentException("Product with sku $sku not found")
@@ -75,6 +83,14 @@ class AdminUploadService(
         )
 
         return url
+    }
+
+    private fun validateImageSignature(normalizedContentType: String, bytes: ByteArray) {
+        when (normalizedContentType) {
+            "image/png" -> FileSignatureValidator.validatePng(bytes)
+            "image/jpeg" -> FileSignatureValidator.validateJpeg(bytes)
+            "image/webp" -> FileSignatureValidator.validateWebp(bytes)
+        }
     }
 
     private companion object {

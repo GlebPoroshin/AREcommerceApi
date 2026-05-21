@@ -42,40 +42,54 @@ class AdminUploadServiceTest {
         arMetadata = ar,
     )
 
+    // -------- Test byte arrays with valid magic signatures --------
+
+    private val glbBytes: ByteArray = byteArrayOf(0x67, 0x6C, 0x54, 0x46) + ByteArray(100)
+    private val pngBytes: ByteArray = byteArrayOf(
+        0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+    ) + ByteArray(100)
+    private val jpegBytes: ByteArray = byteArrayOf(
+        0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte(),
+    ) + ByteArray(100)
+    private val webpBytes: ByteArray = byteArrayOf(
+        0x52, 0x49, 0x46, 0x46,
+        0x00, 0x00, 0x00, 0x00,
+        0x57, 0x45, 0x42, 0x50,
+    ) + ByteArray(100)
+    private val usdzBytes: ByteArray = ByteArray(10) { 2 }
+
     // -------- uploadProductModel --------
 
     @Test
     fun uploadProductModel_glbHappyPath_savesAndroidUrl() {
         val sku = 1000L
-        val bytes = ByteArray(10) { 1 }
         val expectedUrl = "https://storage.example/models/$sku.glb"
         val product = productWithAr(sku)
         every { productRepository.findBySku(sku) } returns product
-        every { objectStorageRepository.uploadModel(sku, ModelFormat.GLB, bytes) } returns expectedUrl
+        every { objectStorageRepository.uploadModel(sku, ModelFormat.GLB, glbBytes) } returns expectedUrl
         val saved = slot<ProductDocument>()
         every { productRepository.save(capture(saved)) } answers { saved.captured }
 
-        val result = service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", bytes)
+        val result = service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", glbBytes)
 
         assertEquals(expectedUrl, result)
         assertEquals(expectedUrl, saved.captured.arMetadata?.arResourceUrlAndroid)
         assertEquals(null, saved.captured.arMetadata?.arResourceUrlIos)
-        verify(exactly = 1) { objectStorageRepository.uploadModel(sku, ModelFormat.GLB, bytes) }
+        verify(exactly = 1) { objectStorageRepository.uploadModel(sku, ModelFormat.GLB, glbBytes) }
         verify(exactly = 1) { productRepository.save(any()) }
     }
 
     @Test
     fun uploadProductModel_usdzHappyPath_savesIosUrl() {
         val sku = 1001L
-        val bytes = ByteArray(10) { 2 }
         val expectedUrl = "https://storage.example/models/$sku.usdz"
         val product = productWithAr(sku)
         every { productRepository.findBySku(sku) } returns product
-        every { objectStorageRepository.uploadModel(sku, ModelFormat.USDZ, bytes) } returns expectedUrl
+        every { objectStorageRepository.uploadModel(sku, ModelFormat.USDZ, usdzBytes) } returns expectedUrl
         val saved = slot<ProductDocument>()
         every { productRepository.save(capture(saved)) } answers { saved.captured }
 
-        val result = service.uploadProductModel(sku, ModelFormat.USDZ, "model/vnd.usdz+zip", bytes)
+        val result = service.uploadProductModel(sku, ModelFormat.USDZ, "model/vnd.usdz+zip", usdzBytes)
 
         assertEquals(expectedUrl, result)
         assertEquals(expectedUrl, saved.captured.arMetadata?.arResourceUrlIos)
@@ -105,12 +119,23 @@ class AdminUploadServiceTest {
     }
 
     @Test
+    fun uploadProductModel_invalidGlbSignature_throwsIllegalArgumentException() {
+        val sku = 1000L
+        val invalidBytes = ByteArray(10) { 0xFF.toByte() }
+        every { productRepository.findBySku(sku) } returns productWithAr(sku)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", invalidBytes)
+        }
+    }
+
+    @Test
     fun uploadProductModel_productNotFound_throwsIllegalArgumentException() {
         val sku = 9999L
         every { productRepository.findBySku(sku) } returns null
 
         assertThrows(IllegalArgumentException::class.java) {
-            service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", ByteArray(10))
+            service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", glbBytes)
         }
     }
 
@@ -120,7 +145,7 @@ class AdminUploadServiceTest {
         every { productRepository.findBySku(sku) } returns productWithAr(sku, ar = null)
 
         assertThrows(IllegalStateException::class.java) {
-            service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", ByteArray(10))
+            service.uploadProductModel(sku, ModelFormat.GLB, "model/gltf-binary", glbBytes)
         }
     }
 
@@ -129,52 +154,86 @@ class AdminUploadServiceTest {
     @Test
     fun uploadProductImage_pngHappyPath_savesImageAndImagesList() {
         val sku = 2000L
-        val bytes = ByteArray(10) { 3 }
         val expectedUrl = "https://storage.example/images/$sku.png"
         val product = productWithAr(sku)
         every { productRepository.findBySku(sku) } returns product
-        every { objectStorageRepository.uploadImage(sku, bytes, "image/png") } returns expectedUrl
+        every { objectStorageRepository.uploadImage(sku, pngBytes, "image/png") } returns expectedUrl
         val saved = slot<ProductDocument>()
         every { productRepository.save(capture(saved)) } answers { saved.captured }
 
-        val result = service.uploadProductImage(sku, "image/png", bytes)
+        val result = service.uploadProductImage(sku, "image/png", pngBytes)
 
         assertEquals(expectedUrl, result)
         assertEquals(expectedUrl, saved.captured.imageUrl)
         assertEquals(listOf(expectedUrl), saved.captured.images)
-        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, bytes, "image/png") }
+        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, pngBytes, "image/png") }
     }
 
     @Test
     fun uploadProductImage_jpegContentType_passesNormalizedContentTypeToRepository() {
         val sku = 2001L
-        val bytes = ByteArray(10) { 4 }
         val expectedUrl = "https://storage.example/images/$sku.jpg"
         val product = productWithAr(sku)
         every { productRepository.findBySku(sku) } returns product
-        every { objectStorageRepository.uploadImage(sku, bytes, "image/jpeg") } returns expectedUrl
+        every { objectStorageRepository.uploadImage(sku, jpegBytes, "image/jpeg") } returns expectedUrl
         every { productRepository.save(any()) } answers { firstArg() }
 
-        val result = service.uploadProductImage(sku, "image/jpeg", bytes)
+        val result = service.uploadProductImage(sku, "image/jpeg", jpegBytes)
 
         assertEquals(expectedUrl, result)
-        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, bytes, "image/jpeg") }
+        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, jpegBytes, "image/jpeg") }
     }
 
     @Test
     fun uploadProductImage_jpgContentType_normalizedToJpeg() {
         val sku = 2002L
-        val bytes = ByteArray(10) { 5 }
         val expectedUrl = "https://storage.example/images/$sku.jpg"
         val product = productWithAr(sku)
         every { productRepository.findBySku(sku) } returns product
-        every { objectStorageRepository.uploadImage(sku, bytes, "image/jpeg") } returns expectedUrl
+        every { objectStorageRepository.uploadImage(sku, jpegBytes, "image/jpeg") } returns expectedUrl
         every { productRepository.save(any()) } answers { firstArg() }
 
-        val result = service.uploadProductImage(sku, "image/jpg", bytes)
+        val result = service.uploadProductImage(sku, "image/jpg", jpegBytes)
 
         assertEquals(expectedUrl, result)
-        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, bytes, "image/jpeg") }
+        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, jpegBytes, "image/jpeg") }
+    }
+
+    @Test
+    fun uploadProductImage_invalidPngSignature_throwsIllegalArgumentException() {
+        val sku = 2000L
+        val invalidBytes = byteArrayOf(0xFF.toByte(), 0xFF.toByte()) + ByteArray(100)
+        every { productRepository.findBySku(sku) } returns productWithAr(sku)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            service.uploadProductImage(sku, "image/png", invalidBytes)
+        }
+    }
+
+    @Test
+    fun uploadProductImage_invalidJpegSignature_throwsIllegalArgumentException() {
+        val sku = 2001L
+        val invalidBytes = byteArrayOf(0x89.toByte(), 0x50, 0x4E) + ByteArray(100)
+        every { productRepository.findBySku(sku) } returns productWithAr(sku)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            service.uploadProductImage(sku, "image/jpeg", invalidBytes)
+        }
+    }
+
+    @Test
+    fun uploadProductImage_webpHappyPath_savesImageUrl() {
+        val sku = 2003L
+        val expectedUrl = "https://storage.example/images/$sku.webp"
+        val product = productWithAr(sku)
+        every { productRepository.findBySku(sku) } returns product
+        every { objectStorageRepository.uploadImage(sku, webpBytes, "image/webp") } returns expectedUrl
+        every { productRepository.save(any()) } answers { firstArg() }
+
+        val result = service.uploadProductImage(sku, "image/webp", webpBytes)
+
+        assertEquals(expectedUrl, result)
+        verify(exactly = 1) { objectStorageRepository.uploadImage(sku, webpBytes, "image/webp") }
     }
 
     @Test
@@ -205,7 +264,7 @@ class AdminUploadServiceTest {
         every { productRepository.findBySku(sku) } returns null
 
         assertThrows(IllegalArgumentException::class.java) {
-            service.uploadProductImage(sku, "image/png", ByteArray(10))
+            service.uploadProductImage(sku, "image/png", pngBytes)
         }
     }
 }
